@@ -41,7 +41,7 @@ router.post("/api/upload", upload.single("image"), (req, res) => {
 });
 
 router.get("/api/imagehotel/:getimage",(req,res)=>{
-    var filename = req.param('getimage')
+    var filename = req.params.getimage
     res.sendFile(path.resolve(`./uploads/${filename}`))
 })
 
