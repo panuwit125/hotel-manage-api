@@ -58,10 +58,10 @@ router.post("/api/inserthotel", requiredLogin, (req, res) => {
         hotel
           .save()
           .then((result) => {
-            res.json(result);
+            res.json({message:"Insert success."});
           })
           .catch((error) => {
-            res.status(422).json(error);
+            res.status(422).json({error:"Insert error."});
           });
       }
     })
@@ -72,11 +72,11 @@ router.post("/api/inserthotel", requiredLogin, (req, res) => {
 
 router.get("/api/getdatahotel", (req, res) => {
   Hotel.find().then((result) => {
-    if (result) {
+    //if (result) {
       res.json(result);
-    } else {
-      res.status(422).json({ message: "ไม่พบข้อมูล" });
-    }
+    //} else {
+    //  res.status(422).json({ message: "ไม่พบข้อมูล" });
+    //}
   });
 });
 
@@ -86,7 +86,7 @@ router.get("/api/getdatahotel/:idhotel", (req, res) => {
   if (!idhotel) {
     return res.status(422).json({error:"ไม่มี id ชื่อโรงแรม"})
   }
-  Hotel.findOne({ _id: idhotel }).then((result)=>{
+  Hotel.findOne({ name_hotel: idhotel }).then((result)=>{
     if(result){
       res.json(result)
     } else {

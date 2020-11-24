@@ -35,7 +35,7 @@ router.post("/api/signin", (req, res) => {
           let payload = { _id: savedUser._id };
           const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, {
             algorithm: "HS256",
-            expiresIn: 120,
+            expiresIn: 1200,
           });
           const refreshToken = jwt.sign(payload, ACCESS_TOKEN_LIFE, {
             algorithm: "HS256",
@@ -44,6 +44,8 @@ router.post("/api/signin", (req, res) => {
           res.json({
             AccessToken: accessToken,
             RefreshToken: refreshToken,
+            message:"Login success.",
+            user_name:user_name
             //savedUser,
           });
         } else {
