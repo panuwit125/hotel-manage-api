@@ -13,9 +13,15 @@ require('./models/user')
 mongoose.model('User')
 require('./models/hotel')
 mongoose.model('Hotel')
+require('./models/bookingdate')
+mongoose.model('BookingDate')
+require('./models/bookingbyuser')
+mongoose.model('BookingUser')
 app.use(require('./routes/auth'))
 app.use(require('./routes/upload'))
 app.use(require('./routes/hotel'))
+app.use(require('./routes/booking'))
+app.use(require('./routes/showbooking'))
 
 mongoose.connect(MONGOURI,{
     useNewUrlParser: true,
