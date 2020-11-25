@@ -4,14 +4,14 @@ const mongoose = require("mongoose");
 const User = mongoose.model("User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const validator = require("email-validator");
 const {
   ACCESS_TOKEN_SECRET,
-  REFRESH_TOKEN_SECRET,
-  REFRESH_TOKEN_LIFE,
   ACCESS_TOKEN_LIFE,
 } = require("../key");
 const requiredLogin = require("../middlewares/requiredLogin");
 const refreshToken = require("../middlewares/refreshToken");
+const moment = require("moment");
 
 router.get("/api/", (req, res) => {
   res.json({ message: "this is auth" });
@@ -33,10 +33,11 @@ router.post("/api/signin", (req, res) => {
         console.log(doMatch);
         if (doMatch) {
           let payload = { _id: savedUser._id };
-          const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, {
+          /*const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, {
             algorithm: "HS256",
-            expiresIn: 1200,
-          });
+            expiresIn: 6000,
+          });*/
+          const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET);
           const refreshToken = jwt.sign(payload, ACCESS_TOKEN_LIFE, {
             algorithm: "HS256",
             expiresIn: 6000,
@@ -44,9 +45,8 @@ router.post("/api/signin", (req, res) => {
           res.json({
             AccessToken: accessToken,
             RefreshToken: refreshToken,
-            message:"Login success.",
-            user_name:user_name
-            //savedUser,
+            message: "Login success.",
+            user_name: user_name,
           });
         } else {
           return res
@@ -95,6 +95,20 @@ router.post("/api/signup", (req, res) => {
     !birdday_user
   ) {
     return res.status(422).json({ error: "Please add all field." });
+  }
+  if (user_name.length < 5 || pass_word.length < 5) {
+    return res
+      .status(422)
+      .json({ error: "ชื่อผู้ใช้และรหัสผ่านควรยาวมากกว่า 5 ตัวอักษร" });
+  }
+  const start = moment(birdday_user);
+  const end = moment();
+  const range = moment.range(start, end);
+  if (!validator.validate(email_user)) {
+    return res.status(422).json({ error: "Invalid email" });
+  }
+  if (range.diff("days") < 4380) {
+    return res.status(422).json({ error: "อายุต้องมากกว่า 12 ปี" });
   }
   User.findOne({ user_name: user_name })
     .then((savedUser) => {

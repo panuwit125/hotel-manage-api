@@ -1,14 +1,8 @@
 const express = require("express");
-const app = express();
 const router = express.Router();
 const mongoose = require("mongoose");
 const Hotel = mongoose.model("Hotel");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const requiredLogin = require("../middlewares/requiredLogin");
-const refreshToken = require("../middlewares/refreshToken");
-const multer = require("multer");
-const path = require("path");
 
 router.post("/api/inserthotel", requiredLogin, (req, res) => {
   const {
@@ -71,9 +65,13 @@ router.post("/api/inserthotel", requiredLogin, (req, res) => {
 });
 
 router.get("/api/getdatahotel", (req, res) => {
-  Hotel.find().then((result) => {
-    res.json(result);
-  });
+  Hotel.find()
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(422).json(error);
+    });
 });
 
 router.get("/api/getdatahotel/:idhotel", (req, res) => {
@@ -120,10 +118,6 @@ router.get("/api/search/:id", (req, res) => {
   if (!id) {
     return res.status(422).json({ error: "ไม่มีรายการ" });
   }
-  /*Hotel.find({ "name_hotel": /.*id*./ }, function (err, data) {
-    //console.log("test", data, err);
-    res.json(data);
-  });*/
   Hotel.find({ name_hotel: { $regex: id, $options: "$i" } })
     .then((result) => {
       res.json({ result });
@@ -131,12 +125,6 @@ router.get("/api/search/:id", (req, res) => {
     .catch((error) => {
       res.status(422).json({ error });
     });
-  /*Hotel.createIndexes({name_hotel: "Vieng"}).then((result)=>{
-    console.log("test",result)
-    res.json(result)
-  }).catch(error=>{
-    res.status(422).json(error)
-  })*/
 });
 
 module.exports = router;

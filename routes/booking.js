@@ -1,14 +1,6 @@
 const express = require("express");
-const app = express();
 const router = express.Router();
-const mongoose = require("mongoose");
-const Hotel = mongoose.model("Hotel");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const requiredLogin = require("../middlewares/requiredLogin");
-const refreshToken = require("../middlewares/refreshToken");
-const multer = require("multer");
-const path = require("path");
 const Moment = require("moment");
 const { extendMoment } = require("moment-range");
 const moment = extendMoment(Moment);
@@ -18,7 +10,7 @@ const {
   saveBookingUser,
 } = require("../functions/savebookingeachdate");
 
-router.post("/api/booking", requiredLogin, async (req, res) => {
+router.post("/api/validatebooking", requiredLogin, async (req, res) => {
   const { check_in, check_out, hotel_id, numberroom } = req.body;
   const start = moment(check_in);
   const end = moment(check_out);
@@ -127,6 +119,7 @@ router.post("/api/booking", requiredLogin, async (req, res) => {
       avalible,
       checkloop,
       hotel_unavalible,
+      day_number: range.diff("days"),
     });
   } catch {
     return res.status(422).json({ error: "มีปัญหาบางอย่าง" });
@@ -134,12 +127,12 @@ router.post("/api/booking", requiredLogin, async (req, res) => {
 });
 
 router.post("/api/savebooking", requiredLogin, async (req, res) => {
+  const { _id } = req.user;
   const {
     check_in,
     check_out,
     hotel_id,
     price_booking,
-    user_id,
     booking_adult,
   } = req.body;
   const start = moment(check_in);
@@ -212,7 +205,7 @@ router.post("/api/savebooking", requiredLogin, async (req, res) => {
           check_out,
           hotel_id,
           price_booking,
-          user_id,
+          _id,
           booking_adult
         );
         await console.log("check4", checkloop, resultsavebyuser);

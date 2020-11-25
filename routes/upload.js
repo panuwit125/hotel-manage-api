@@ -1,12 +1,6 @@
 const express = require("express");
 const app = express();
 const router = express.Router();
-const mongoose = require("mongoose");
-const User = mongoose.model("User");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const requiredLogin = require("../middlewares/requiredLogin");
-const refreshToken = require("../middlewares/refreshToken");
 const multer = require("multer");
 const path = require("path");
 

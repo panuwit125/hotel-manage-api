@@ -17,7 +17,6 @@ const moment = extendMoment(Moment);
 router.get("/api/getbooking", requiredLogin, async (req, res) => {
   console.log(req.user);
   const { _id } = req.user;
-  //res.json(_id)
   if (!_id) {
     return res.status(422).json({ error: "not found id" });
   }
