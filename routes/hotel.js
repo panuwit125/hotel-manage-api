@@ -58,10 +58,10 @@ router.post("/api/inserthotel", requiredLogin, (req, res) => {
         hotel
           .save()
           .then((result) => {
-            res.json({message:"Insert success."});
+            res.json({ message: "Insert success." });
           })
           .catch((error) => {
-            res.status(422).json({error:"Insert error."});
+            res.status(422).json({ error: "Insert error." });
           });
       }
     })
@@ -72,29 +72,71 @@ router.post("/api/inserthotel", requiredLogin, (req, res) => {
 
 router.get("/api/getdatahotel", (req, res) => {
   Hotel.find().then((result) => {
-    //if (result) {
-      res.json(result);
-    //} else {
-    //  res.status(422).json({ message: "ไม่พบข้อมูล" });
-    //}
+    res.json(result);
   });
 });
 
 router.get("/api/getdatahotel/:idhotel", (req, res) => {
-  console.log(req.params.idhotel)
-  var idhotel = req.params.idhotel
+  console.log(req.params.idhotel);
+  var idhotel = req.params.idhotel;
   if (!idhotel) {
-    return res.status(422).json({error:"ไม่มี id ชื่อโรงแรม"})
+    return res.status(422).json({ error: "ไม่มี id ชื่อโรงแรม" });
   }
-  Hotel.findOne({ name_hotel: idhotel }).then((result)=>{
-    if(result){
-      res.json(result)
-    } else {
-      res.status(422).json({error:"ไม่พบโรงแรม"})
-    }
-  }).catch((error)=>{
-    return res.status(422).json({error:"มีปัญหาผิดพลาดขณะตรวจสอบข้อมูล"})
-  })
+  Hotel.findOne({ name_hotel: idhotel })
+    .then((result) => {
+      if (result) {
+        res.json(result);
+      } else {
+        res.status(422).json({ error: "ไม่พบโรงแรม" });
+      }
+    })
+    .catch((error) => {
+      return res.status(422).json({ error: "มีปัญหาผิดพลาดขณะตรวจสอบข้อมูล" });
+    });
+});
+
+router.get("/api/getdatahotel/booking/:idhotel", (req, res) => {
+  console.log(req.params.idhotel);
+  var idhotel = req.params.idhotel;
+  if (!idhotel) {
+    return res.status(422).json({ error: "ไม่มี id ชื่อโรงแรม" });
+  }
+  Hotel.findOne({ _id: idhotel })
+    .then((result) => {
+      if (result) {
+        res.json(result);
+      } else {
+        res.status(422).json({ error: "ไม่พบโรงแรม" });
+      }
+    })
+    .catch((error) => {
+      return res.status(422).json({ error: "มีปัญหาผิดพลาดขณะตรวจสอบข้อมูล" });
+    });
+});
+
+router.get("/api/search/:id", (req, res) => {
+  console.log(req.params.id);
+  var id = req.params.id;
+  if (!id) {
+    return res.status(422).json({ error: "ไม่มีรายการ" });
+  }
+  /*Hotel.find({ "name_hotel": /.*id*./ }, function (err, data) {
+    //console.log("test", data, err);
+    res.json(data);
+  });*/
+  Hotel.find({ name_hotel: { $regex: id, $options: "$i" } })
+    .then((result) => {
+      res.json({ result });
+    })
+    .catch((error) => {
+      res.status(422).json({ error });
+    });
+  /*Hotel.createIndexes({name_hotel: "Vieng"}).then((result)=>{
+    console.log("test",result)
+    res.json(result)
+  }).catch(error=>{
+    res.status(422).json(error)
+  })*/
 });
 
 module.exports = router;
