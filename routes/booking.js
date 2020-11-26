@@ -12,6 +12,9 @@ const {
 
 router.post("/api/validatebooking", requiredLogin, async (req, res) => {
   const { check_in, check_out, hotel_id, numberroom } = req.body;
+  if (!check_in || !check_out || !hotel_id || !numberroom) {
+    return res.status(422).json({ error: "Please add all field." });
+  }
   const start = moment(check_in);
   const end = moment(check_out);
   const range = moment.range(start, end);
@@ -135,6 +138,15 @@ router.post("/api/savebooking", requiredLogin, async (req, res) => {
     price_booking,
     booking_adult,
   } = req.body;
+  if (
+    !check_in ||
+    !check_out ||
+    !hotel_id ||
+    !price_booking ||
+    !booking_adult
+  ) {
+    return res.status(422).json({ error: "Please add all field." });
+  }
   const start = moment(check_in);
   const end = moment(check_out);
   const range = moment.range(start, end);

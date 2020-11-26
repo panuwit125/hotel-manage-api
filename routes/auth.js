@@ -5,10 +5,7 @@ const User = mongoose.model("User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const validator = require("email-validator");
-const {
-  ACCESS_TOKEN_SECRET,
-  ACCESS_TOKEN_LIFE,
-} = require("../key");
+const { ACCESS_TOKEN_SECRET, ACCESS_TOKEN_LIFE } = require("../key");
 const requiredLogin = require("../middlewares/requiredLogin");
 const refreshToken = require("../middlewares/refreshToken");
 const moment = require("moment");
@@ -23,6 +20,9 @@ router.get("/api/testmid", requiredLogin, (req, res) => {
 
 router.post("/api/signin", (req, res) => {
   const { user_name, pass_word } = req.body;
+  if (!user_name || !pass_word) {
+    return res.status(422).json({ error: "Please add all field." });
+  }
   User.findOne({ user_name: user_name }).then((savedUser) => {
     if (!savedUser) {
       return res.status(422).json({ error: "Not found username" });
